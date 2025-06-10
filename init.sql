@@ -1,5 +1,3 @@
-
-
 CREATE TABLE employees (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL CHECK (name ~ '^[A-Za-z\s]+$'),

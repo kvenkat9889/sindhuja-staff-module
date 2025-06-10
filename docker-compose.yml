@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: hr_postgres
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: staff_management
+    ports:
+      - "5119:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+  backend:
+    container_name: hr_backend
+    build: 
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "3400:3400"
+    depends_on:
+      - postgres
+    environment:
+      - PORT=3400
+    restart: unless-stopped
+
+  hr-staff:
+    container_name: hr_frontend
+    build: 
+      context: ./HR-staff
+      dockerfile: Dockerfile
+    ports:
+      - "8128:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
